@@ -1,0 +1,3 @@
+[submodule "visualwakewords"]
+	path = visualwakewords
+	url = https://github.com/Mxbonn/visualwakewords
