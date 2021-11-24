@@ -1,7 +1,9 @@
 import torch
 from torchinfo import summary
 import argparse
-
+from pydoc import locate
+import os
+import fnmatch
 
 #create the argument parser
 parser = argparse.ArgumentParser()
@@ -10,6 +12,19 @@ parser.add_argument("--batch_size", help="training batch size")
 
 args = parser.parse_args()
 
+
+
+#dynamically load models
+for _, _, files in os.walk('models'):
+    for name in files:
+        if fnmatch.fnmatch(name, '*.py'):
+            fn = 'models.' + name[:-3]
+            m = locate(fn)
+            for i in m.models:
+                print(i)
+
+
+"""
 #set the parser args
 
 
@@ -54,4 +69,4 @@ epochs = 50
 for t in range(epochs):
     print(f"Epoch {t+1}\n---------------------------")
 print("Done!")
-
+"""
