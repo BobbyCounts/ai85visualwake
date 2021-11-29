@@ -22,10 +22,10 @@ class wakeModel(nn.Module):
 
         self.lastPool = nn.MaxPool2d(4)
 
-        self.fc1 = nn.Linear(10*8*64, 64, bias=bias)
-        self.fc2 = nn.Linear(64, num_classes, bias=bias)
+        self.fc1 = nn.Linear(10*8*64, 32, bias=bias)
+        self.fc2 = nn.Linear(32, num_classes, bias=bias)
 
-        self.dropout = nn.Dropout(.4)
+        self.dropout = nn.Dropout(.2)
         
     def forward(self,x):
         x = self.conv1_1(x)
@@ -44,7 +44,7 @@ class wakeModel(nn.Module):
         x = self.lastPool(x)
         x = x.view(x.size(0), -1)
         x = self.fc1(x)
-#       x = self.dropout(x)
+        x = self.dropout(x)
         x = self.fc2(x)
         return x
 
