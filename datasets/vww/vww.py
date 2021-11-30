@@ -10,6 +10,7 @@ def vww_get_datasets(load_train=True, load_test=True):
         train_transform = transforms.Compose([
             transforms.Resize(resolution),
             transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(degrees=(0, 60)),
             transforms.ToTensor(),
             #transforms.Normalize()
         ])

@@ -1,4 +1,5 @@
 import torch
+import datetime
 from torchinfo import summary
 import argparse
 from pydoc import locate
@@ -8,6 +9,12 @@ import fnmatch
 import torch.nn.functional as F
 
 import datasets.vww.vww as vww
+
+
+
+#get the start time of the training
+now = datetime.datetime.now()
+date_time = now.strftime("%Y.%m.%d-%H%M%S")
 
 #create the argument parser
 parser = argparse.ArgumentParser()
@@ -90,6 +97,8 @@ print("Done!")
 
 
 def train(model, optimizer, loss_fn, train_dataloader, test_dataloader, epochs=20, device="cpu"):
+    best_loss = 1000
+    best_accuracy = 0
     for epoch in range(1, epochs+1):
         model.to(device)
         training_loss = 0.0
@@ -122,9 +131,38 @@ def train(model, optimizer, loss_fn, train_dataloader, test_dataloader, epochs=2
             num_correct += torch.sum(correct).item()
             num_examples += correct.shape[0]
         val_loss /= len(test_dataloader.dataset)
+        accuracy = num_correct / num_examples
 
-        print('Epoch: {}, Training Loss: {:.2f}, Validation Loss: {:.2f}, accuracy = {:.2f}'.format(epoch, training_loss,
-        val_loss, num_correct / num_examples))
+        print('Epoch: {}, Training Loss: {:.3f}, Validation Loss: {:.3f}, accuracy = {:.3f}'.format(epoch, training_loss,
+        val_loss, accuracy))
+        
+        path = f"./checkpoints/{type(model).__name__}/{date_time}/"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        
+        
+        #save checkpoint if better than previous best
+        if(best_loss > val_loss):
+                torch.save({
+                    'epoch': epoch,
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'training_loss': training_loss,
+                    'validation_loss': val_loss,
+                    'accuracy': accuracy,
+                }, path + 'best_val_loss.pth')
+                best_loss = val_loss
+        
+        if(best_accuracy < accuracy):
+                torch.save({
+                    'epoch': epoch,
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'training_loss': training_loss,
+                    'validation_loss': val_loss,
+                    'accuracy': accuracy,
+                }, path + 'best_acc.pth')
+                best_accuracy = accuracy
 
-train(model, optimizer, loss_fn, train_dataloader, test_dataloader, 20, device)      
+train(model, optimizer, loss_fn, train_dataloader, test_dataloader, 100, device)      
 
