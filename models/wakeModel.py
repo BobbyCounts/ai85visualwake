@@ -81,11 +81,11 @@ class wakeModel2(nn.Module):
         self.maxpool = nn.MaxPool2d(2)
 
         self.conv2_1 = nn.Conv2d(64, 128, 3, stride=1, padding=1, bias=bias)
-        self.conv2_2 = nn.Conv2d(128, 192, 3, stride=1, padding=1, bias=bias)
-        self.conv2_3 = nn.Conv2d(192, 64, 3, stride=1, padding=1, bias=bias)
+        self.conv2_2 = nn.Conv2d(128, 128, 3, stride=1, padding=1, bias=bias)
+        self.conv2_3 = nn.Conv2d(128, 64, 3, stride=1, padding=1, bias=bias)
 
-        self.fc1 = nn.Linear(5*4*64, 48, bias=bias)
-        self.fc2 = nn.Linear(48, num_classes, bias=bias)
+        self.fc1 = nn.Linear(5*4*64, 64, bias=bias)
+        self.fc2 = nn.Linear(64, num_classes, bias=bias)
 
         self.dropout = nn.Dropout(.25)
         
